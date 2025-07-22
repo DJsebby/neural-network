@@ -1,19 +1,33 @@
-#include "matrix.h"
+#include "NeuralNetwork.h"
+#include "mnist_loader/mnist_loader.h"
 
 int main() {
-  matrix a(3, 3);
-  matrix b(3, 3);
+  NeuralNetwork network;
+  // load in the images
+  std::vector<std::pair<std::vector<double>, std::vector<double>>> dataset =
+      load_mnist_dataset("/dataset");
 
-  std::vector<std::vector<double>> mat = {{-8, 2, 3}, {-4, 5, 8}, {7, 10, 9}};
-  a.insert_matrix(mat);
-  mat = {{1, 2, 3}, {-4, 5, 8}, {3, 0, 9}};
-  b.insert_matrix(mat);
-  matrix trans = a.transpose();
-  matrix inv = a.inverse();
-  //   inv.print_matrix();
-  a.print_matrix();
-  matrix ad = a.subtract(b);
-  ad.print_matrix();
-  //   trans.print_matrix();
+  // make the dataset usable
+  std::vector<matrix> train_inputs;
+  std::vector<std::vector<double>> train_targets;
+  for (const auto& [input_vec, target_vec] : dataset) {
+    matrix input_matrix;
+    input_matrix.from_vector(input_vec);
+    train_inputs.push_back(input_matrix);
+    train_targets.push_back(target_vec);
+  }
+
+  // define the network
+  DenseLayer layer1(784, 128, sigmoid);
+  DenseLayer layer2(128, 10, sigmoid);
+  std::vector<DenseLayer> model = {layer1, layer2};
+  network.set_layers(model);
+  // training parameters
+  int epochs = 10;
+  double learningRate = 0.1;
+
+  // train te model
+  network.train(train_inputs, train_targets, learningRate, epochs);
+
   return 0;
 }

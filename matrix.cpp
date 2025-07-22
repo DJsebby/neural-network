@@ -275,3 +275,22 @@ std::vector<double> matrix::to_vector() const {
 
   return vec;
 }
+
+// Returns a 1 x numCols matrix where each element is the sum of the column
+// elements
+matrix matrix::sum_rows() const {
+  vector<int> dim = this->get_dimension_int();
+
+  int rows = dim[0];
+  int cols = dim[1];
+  matrix result(1, cols);
+
+  for (int j = 0; j < cols; ++j) {
+    double colSum = 0;
+    for (int i = 0; i < rows; ++i) {
+      colSum += this->data[i][j];
+    }
+    result.data[0][j] = colSum;
+  }
+  return result;
+}

@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "activations.h"
+#include "activations/activations.h"
+
+#pragma once
 
 class matrix {
  private:
@@ -26,7 +28,7 @@ class matrix {
   void scalar_multiply(double num);
   matrix hadamard(const matrix &other) const;
   matrix apply_function(const std::function<double(double)> &func) const;
-
+  matrix sum_rows() const;
   void randomise(double min, double max);
   static matrix from_vector(const std::vector<double> &vec);
   std::vector<double> to_vector() const;

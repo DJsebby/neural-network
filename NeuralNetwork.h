@@ -12,12 +12,18 @@ class NeuralNetwork {
  public:
   NeuralNetwork() = default;
 
+  void set_layers(std::vector<DenseLayer>& new_layers);
+
   void add_layer(const DenseLayer& layer);
 
   matrix forward(const matrix& input);
 
-  float computeLoss(const std::vector<float>& predicted,
-                    const std::vector<float>& target);
-  std::vector<float> computeLossDerivative(const std::vector<float>& predicted,
-                                           const std::vector<float>& target);
+  void train(const std::vector<matrix>& inputs,
+             const std::vector<std::vector<double>>& targets,
+             double learning_rate, int epochs);
+
+  double computeLoss(const std::vector<double>& predicted,
+                     const std::vector<double>& target);
+  std::vector<double> computeLossDerivative(
+      const std::vector<double>& predicted, const std::vector<double>& target);
 };

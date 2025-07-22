@@ -5,11 +5,12 @@
 #include <iostream>
 #include <stdexcept>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 namespace fs = std::filesystem;
-std::vector<std::pair<std::vector<float>, uint8_t>> load_mnist_dataset(
-    const std::string& dataset_path) {
-  std::vector<std::pair<std::vector<float>, uint8_t>> dataset;
+std::vector<std::pair<std::vector<double>, std::vector<double>>>
+load_mnist_dataset(const std::string& dataset_path) {
+  std::vector<std::pair<std::vector<double>, std::vector<double>>> dataset;
 
   for (int label = 0; label <= 9; label++) {
     std::string folder = dataset_path + "/" + std::to_string(label);
@@ -38,13 +39,16 @@ std::vector<std::pair<std::vector<float>, uint8_t>> load_mnist_dataset(
         continue;
       }
 
-      std::vector<float> image;
+      std::vector<double> image;
       image.reserve(28 * 28);
       for (int i = 0; i < 28 * 28; ++i) {
-        image.push_back(data[i] / 255.0f);  // normalize pixel to [0, 1]
+        image.push_back(data[i] / 255);  // normalize pixel to [0, 1]
       }
 
-      dataset.emplace_back(image, static_cast<uint8_t>(label));
+      std::vector<double> one_hot_label(10, 0);
+      one_hot_label[label] = 1;
+
+      dataset.emplace_back(image, one_hot_label);
       stbi_image_free(data);
     }
   }
